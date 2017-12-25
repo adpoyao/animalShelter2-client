@@ -34,6 +34,23 @@ export const adoptDogError = (error) => ({
   error
 })
 
+export const SUBMIT_DOG_SUCCESS = 'SUBMIT_DOG_SUCCESS';
+export const submitDogSuccess = () => ({
+  type: SUBMIT_DOG_SUCCESS
+})
+
+export const SUBMIT_DOG_REQUEST = 'SUBMIT_DOG_REQUEST'
+export const submitDogRequest = () => ({
+  type: SUBMIT_DOG_REQUEST
+})
+
+export const SUBMIT_DOG_ERROR = 'SUBMIT_DOG_ERROR'
+export const submitDogError = (error) => ({
+  type: SUBMIT_DOG_ERROR,
+  error
+})
+
+
 //async
 export const FETCH_DOG = 'FETCH_DOG'
 export const fetchDog = () => dispatch => {
@@ -71,4 +88,27 @@ export const adoptDog = () => dispatch => {
   .then(() => dispatch(adoptDogSuccess()))
   .then(() => dispatch(fetchDog()))
   .catch(error => dispatch(adoptDogError(error)))
+}
+
+export const SUBMIT_DOG = 'SUBMIT_DOG'
+export const submitDog = (data, type) => dispatch => {
+  dispatch(submitDogRequest());
+  console.log('Helping you abandon your pet...')
+  return fetch(`${REACT_APP_API_BASE_URL}/${type}`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+      'accept': 'application/json'
+    }
+  })
+  .then(res => {
+    if(!res.ok){
+      return Promise.reject(res.statusText)
+    }
+    console.log('Added it to shelter!')
+  })
+  .then(() => dispatch(submitDogSuccess()))
+  .then(() => dispatch(fetchDog()))
+  .catch(error => dispatch(submitDogError(error)))
 }
